@@ -1,5 +1,4 @@
 import pymysql
-import MySQLdb
 import os
 from dotenv import load_dotenv
 
@@ -11,16 +10,16 @@ load_dotenv()
 host = os.environ.get("HOST")
 port = os.environ.get("PORT")
 user = os.environ.get("USER")
-passwd = os.environ.get("PASSWORD")
+password = os.environ.get("PASSWORD")
 db = os.environ.get("DB")
 
 
-def connectDB(host=host, port=port, user=user, passwd=passwd, db=db):
+def connectDB(host=host, port=port, user=user, password=password, db=db):
     """
     connects to a database and returns a database object
     """
-    dbConnection = MySQLdb.connect(
-        host=host, port=int(port), user=user, passwd=passwd, db=db, ssl={"ssl": {}}
+    dbConnection = pymysql.connect(
+        host=host, port=int(port), user=user, password=password, db=db, ssl={"ca": None}
     )
     return dbConnection
 
@@ -44,7 +43,7 @@ def query(dbConnection=None, query=None, query_params=()):
 
     print("Executing %s with %s" % (query, query_params))
     # Create a cursor to execute query. Why? Because apparently they optimize execution by retaining a reference according to PEP0249
-    cursor = dbConnection.cursor(MySQLdb.cursors.DictCursor)
+    cursor = dbConnection.cursor(pymysql.cursors.DictCursor)
 
     # Sanitize the query before executing it.
     cursor.execute(query, query_params)

@@ -24,5 +24,10 @@ jobs:
           pip install -r requirements.txt
           pip install ruff
 
-      - name: Lint with Ruff
-        run: ruff check .
+      - name: Ruff format check
+        run: |
+          ruff format . --check
+
+      - name: Ruff lint
+        run: |
+          ruff check .
