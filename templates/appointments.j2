@@ -1,0 +1,135 @@
+{% extends "main.j2" %}
+
+{% block page_header %}
+    <div class="flex-center">
+        <h2>Appointments</h2>
+        
+        <div class="add-container {{ "hide" if action == "" }}">
+            <button class="add">Add</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+{% if not error %}
+    <div class="flex-center filter">
+        <input type="text" id="searchInput" placeholder="Filter results by patient name" autocomplete="off">
+    </div>
+{% endif %}
+
+{# READ table #}
+{% if appointments %}
+<div class="table-container">
+    <table>
+        <thead>
+            {# For the table header row, we print the DB attribute names #}
+            <tr>
+                {% for key in appointments[0].keys() %}
+                <th>{{ key }}</th>
+                {% endfor %}
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {# For each row, print the appointmentId, clinic, dateTime, patient name, and status #}
+            {% for appointment in appointments %}
+            <tr>
+                <td>{{ appointment['Appointment ID'] }}</td>
+                <td>{{ appointment['Appointment Date Time']}}</td>
+                <td>{{ appointment['Clinic'] }}</td>
+                <td class="name">{{ appointment['Patient Name'] }}</td>
+                <td>{{ appointment['Appointment Status'] }}</td>
+                <td><a href="{{ url_for('appointments', id=appointment['Appointment ID']) }}"><span class="material-symbols-outlined" title ="edit">edit</span></td>
+                <td>
+                    <form class="delete-trigger" data-id="{{ appointment['Appointment ID'] }}">
+                        <button type="button" class="deletebutton" title="delete">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% if not appointments and not error %}
+    <h2 style="text-align:center">No Appointments to show</h2>
+{% endif %}
+
+{# Form to add and update an appointment #}
+<div class="popup add-form-popup {{"active" if action == "Update"}}">
+    <div class="add-form">
+        <button class="close"><span class="material-symbols-outlined">close</span></button>
+
+        <h2>{{action}} Appointment</h2>
+
+        <form action="/appointments/{{ "create" if action == "Add" else "update" }}" method="POST">
+            {% if action == "Update" %}
+                <input type="hidden" name="appointmentId" id="appointmentId" value= "{{ appointment['appointmentId'] }}">
+            {% endif %}
+            <div class="flex-center">
+                <label for="dateTime">Date Time: <span class ="red">*</span></label>
+                <input type="datetime-local" name="dateTime" id="dateTime" value="{{ appointment.dateTime }}" required>
+            </div>
+
+            <div class="flex-center">
+                <label for="clinicId">Clinic: <span class="red">*</span></label>
+                <select name="clinicId" id="clinicId" value="{{ appointment['clinicId'] }}" required>
+                    {% if action == "Add" %}
+                        <option value="">Select a clinic</option>
+                    {% endif %}
+                    {% for clinic in clinics %}
+                        <option value="{{ clinic['clinicId'] }}" {% if clinic['clinicId'] == appointment['clinicId'] %} selected {% endif %}>Capital Family Clinic at {{ clinic.address }}, {{ clinic.city }}, {{ clinic.state }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="flex-center">
+                <label for="patientId">Patient: <span class="red">*</span></label>
+                <select name="patientId" id="patientId" value="{{ appointment['patientId'] }}" required>
+                    {% if action == "Add" %}
+                        <option value="">Select a patient</option>
+                    {% endif %}
+                    {% for patient in patients %}
+                        <option value="{{ patient['patientId'] }}" {% if patient['patientId'] == appointment['patientId'] %} selected {% endif %}>  {{ patient.firstName }} {{ patient.lastName }} </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="flex-center">
+                <label for="statusId">Appointment Status: <span class="red">*</span></label>
+                <select name="statusId" id="statusId" required>
+                    {% if action == "Add" %}
+                        <option value="">Select an appointment status</option>
+                    {% endif %}
+                    <option value="1" {% if appointment['statusId'] == 1 %} selected {% endif %}>Scheduled</option>
+                    <option value="2" {% if appointment['statusId'] == 2 %} selected {% endif %}>Walk In</option>
+                    <option value="3" {% if appointment['statusId'] == 3 %} selected {% endif %}>No Show</option>
+                    <option value="4" {% if appointment['statusId'] == 4 %} selected {% endif %}>Cancelled</option>
+                    <option value="5" {% if appointment['statusId'] == 5 %} selected {% endif %}>Completed</option>
+                </select>
+            </div>
+            <button class="submit">Submit</button>
+        </form>
+    </div>
+</div>
+
+<div class="delete-form-popup">
+    <div class="delete-form">
+        <h2>Confirm Delete</h2>
+        <p>Are you sure you want to delete this appointment?</p>
+
+        <form id="confirmDeleteForm" method="POST" action="/appointments/delete">
+            <input type="hidden" name="id_to_delete" id="deleteId">  
+            <button class="submit" type="submit">Confirm</button>
+            <button class="cancel" type="button" id="cancel">Cancel</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "main.j2" %}
+
+{% block page_header %}
+    <h2>Results</h2>
+{% endblock %}
+
+{% block content %}
+
+{# READ table #}
+{% if results %}
+<div class="table-container">
+    <table>
+        <thead>
+            {# For the table header row, we print the DB attribute names #}
+            <tr>
+                {% for key in results[0].keys() %}
+                <th>{{ key }} </th>
+                {% endfor %}
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {# For each row, print the testResultId, result #}
+            {% for result in results %}
+            <tr>
+                <td>{{ result['Test Result ID'] }}</td>
+                <td>{{ result['Result'] }}</td>
+                <td><a href="{{ url_for('results', id=result['Test Result ID']) }}"><span class="material-symbols-outlined" title ="edit">edit</span></a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% if not results and not error %}
+    <h2 style="text-align:center">No Results to show</h2>
+{% endif %}
+
+{# Form to update a result #}
+<div class="popup add-form-popup {{"active" if action == "Update"}}">
+    <div class="add-form">
+        <button class="close"><span class="material-symbols-outlined">close</span></button>
+
+        <h2>{{action}} Result</h2>
+
+        <form action="/results/{{ "create" if action == "Add" else "update" }}" method="POST">
+            {% if action == "Update" %}
+                <input type="hidden" name="testResultId" id="testResultId" value= "{{ result['testResultId'] }}">
+            {% endif %}
+            <div class="flex-center">
+                <label for="status">Result: <span class="red">*</span></label>
+                <input type="text" pattern="[A-Za-z]*" required title="Only letters A-Z and a-z are allowed" name="result" id="result" value="{{ result.result }}" required>
+            </div>
+
+            <button class="submit">Submit</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

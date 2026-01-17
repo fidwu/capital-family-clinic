@@ -1,0 +1,89 @@
+{% extends "main.j2" %}
+
+{% block page_header %}
+    <div class="flex-center">
+        <h2>Tests</h2>
+
+        <div class="add-container {{ "hide" if action == "" }}">
+            <button class="add">Add</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+{# READ table #}
+{% if tests %}
+<div class="table-container">
+    <table>
+        <thead>
+            {# For the table header row, we print the DB attribute names #}
+            <tr>
+                {% for key in tests[0].keys() %}
+                <th>{{ key }}</th>
+                {% endfor %}
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {# For each row, print the testId, name #}
+            {% for test in tests %}
+            <tr>
+                <td>{{ test['Test ID'] }}</td>
+                <td>{{ test['Name'] }}</td>
+                <td><a href="{{ url_for('tests', id=test['Test ID']) }}"><span class="material-symbols-outlined" title ="edit">edit</span></td>
+                <td>
+                    <form class="delete-trigger" data-id="{{ test['Test ID'] }}">
+                        <button type="button" class="deletebutton" title ="delete">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% if not tests and not error %}
+    <h2 style="text-align:center">No Tests to show</h2>
+{% endif %}
+
+{# Form to add and update a test #}
+<div class="popup add-form-popup {{"active" if action == "Update"}}">
+    <div class="add-form">
+        <button class="close"><span class="material-symbols-outlined">close</span></button>
+
+        <h2>{{action}} Test</h2>
+
+        <form action="/tests/{{ "create" if action == "Add" else "update" }}" method ="POST">
+            {% if action == "Update" %}
+                <input type="hidden" name ="testId" id ="testId" value= "{{ test['testId'] }}">
+            {% endif %}
+            <div class="flex-center">
+                <label for="name">Name: <span class = "red">*</span></label>
+                <input type="text" name="name" id ="name" value= "{{test['name']}}" required>
+            </div>
+
+            <button class="submit">Submit</button>
+        </form>
+    </div>
+</div>
+
+<div class="delete-form-popup">
+    <div class="delete-form">
+        <h2>Confirm Delete</h2>
+        <p>Are you sure you want to delete this test?</p>
+
+        <form id="confirmDeleteForm" method="POST" action="/tests/delete">
+            <input type="hidden" name="id_to_delete" id="deleteId">  
+            <button class="submit" type="submit">Confirm</button>
+            <button class="cancel" type="button" id="cancel">Cancel</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

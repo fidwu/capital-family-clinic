@@ -1,0 +1,62 @@
+{% extends "main.j2" %}
+
+{% block page_header %}
+    <h2>Statuses</h2>
+{% endblock %}
+
+{% block content %}
+
+{# READ table #}
+{% if statuses %}
+<div class="table-container">
+    <table>
+        <thead>
+            {# For the table header row, we print the DB attribute names #}
+            <tr>
+                {% for key in statuses[0].keys() %}
+                <th>{{ key }}</th>
+                {% endfor %}
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {# For each row, print the statusId, status #}
+            {% for status in statuses %}
+            <tr>
+                <td>{{ status['Status ID'] }}</td>
+                <td>{{ status['Status'] }}</td>
+                <td><a href="{{ url_for('statuses', id=status['Status ID']) }}"><span class="material-symbols-outlined" title ="edit">edit</span></a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% if not statuses and not error %}
+    <h2 style="text-align:center">No Statuses to show</h2>
+{% endif %}
+
+{# Form to update a status #}
+<div class="popup add-form-popup {{"active" if action == "Update"}}">
+    <div class="add-form">
+        <button class="close"><span class="material-symbols-outlined">close</span></button>
+
+        <h2>{{action}} Status</h2>
+
+        <form action="/statuses/{{ "create" if action == "Add" else "update" }}" method="POST">
+            {% if action == "Update" %}
+                <input type="hidden" name="statusId" id="statusId" value= "{{ status['statusId'] }}">
+            {% endif %}
+            <div class="flex-center">
+                <label for="status">Status: <span class="red">*</span></label>
+                <input type="text" name="status" id="status" value="{{ status.status }}" required>
+            </div>
+
+            <button class="submit">Submit</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

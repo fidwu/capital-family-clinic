@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Capital Family Clinic</title>
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <!-- Own CSS and JS -->
+    <link href='/static/style.css' rel='stylesheet' />
+    <script src="/static/script.js"></script>
+
+    <!-- Chart JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Lato font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+    
+    <!-- Icons from Material Symbols -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=close,delete,edit,filter_list" />
+</head>
+<body>
+    <div class="flex-center">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Capital Family Clinic" width="200px" />
+    </div>
+    <h1>Capital Family Clinic Appointment Management System</h1>
+    <nav>
+        <a href="/" class="{{ 'active' if request.path == '/' }}">Home</a>
+        <a href="/clinics" class="{{ 'active' if request.path == '/clinics' }}">Clinics</a>
+        <a href="/patients" class="{{ 'active' if request.path == '/patients' }}">Patients</a>
+        <a href="/appointments" class="{{ 'active' if request.path == '/appointments' }}">Appointments</a>
+        <a href="/statuses" class="{{ 'active' if request.path == '/statuses' }}">Statuses</a>
+        <a href="/results" class="{{ 'active' if request.path == '/results' }}">Results</a>
+        <a href="/tests" class="{{ 'active' if request.path == '/tests' }}">Tests</a>
+        <a href="/scheduledtests" class="{{ 'active' if request.path == '/scheduledtests' }}">Scheduled Tests</a>
+        <button class="reset-trigger">Reset</button>
+    </nav>
+
+    <!-- Confirm reset database popup -->
+    <div class="reset-popup">
+        <div class="confirm-reset">
+            <h2>Confirm Reset</h2>
+            <p>Are you sure you want to reset the database?</p>
+
+            <div id="confirmReset">
+                <a href="/reset" class="button submit">Confirm</a>
+                <button class="cancel" type="button">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    {% block page_header %}{% endblock %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-box-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+
+</body>
+</html>

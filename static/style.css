@@ -1,0 +1,331 @@
+/* General Base Styling */
+body, html {
+    font-family: 'Lato';
+}
+
+html {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #BCEEFF 0%, #B9F2F2 45.19%, #D2FFDC 100%);
+}
+
+body {
+    margin: 20px;
+}
+
+p, ul {
+    line-height: 25px;
+}
+
+.red {
+    color: red;
+}
+
+.hide {
+    display: none !important;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    grid-gap: 5px;
+    justify-content: center;
+    position: relative;
+}
+
+button {
+    background-color: transparent;
+    appearance: none;
+    border: 0;
+}
+
+.add-container {
+    position: absolute;
+    right: 0;
+}
+
+.alert {
+    display: flex;
+    align-items: center;
+    margin: auto;
+    text-align: center;
+    justify-content: center;
+    border: 1px solid red;
+    width: fit-content;
+    padding: 15px;
+    border-radius: 7px;
+}
+
+/* Styling for navigation */
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    grid-gap: 20px;
+    margin-bottom: 25px;
+}
+
+nav a, .reset-trigger {
+    color: #000;
+    font-family: 'Lato';
+    text-decoration: underline;
+    font-size: 16px;
+    padding: 0;
+    cursor: pointer;
+}
+
+nav a.active, button.add, button.submit, button.cancel, .button {
+    background-color: #92C1FF;
+    border-radius: 10px;
+    text-decoration: none;
+    padding: 15px;
+    width: fit-content;
+    font-size: 16px;
+    cursor: pointer;
+    color: #000;
+}
+
+/* Styling for filters/searches */
+.filter {
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    grid-gap: 20px;
+}
+
+.filter input {
+    width: 25%;
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid gray;
+    background: #fff;
+}
+
+.filters-content-wrap {
+    position: relative;
+    left: 0;
+    height: auto;
+}
+
+.filters-content-wrap .filter-button {
+    cursor: pointer;
+    padding: 8.5px;
+    border: 1px solid gray;
+    border-radius: 8px;
+    background-color: #fff;
+    display: flex;
+    grid-gap: 5px;
+    align-items: center;
+}
+
+.filters-dropdown-content {
+    padding: 15px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #fff;
+    width: 200px;
+    border-radius: 8px;
+}
+
+.filters-dropdown-content ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.filters-dropdown-content li {
+    position: relative;
+}
+
+.filter input[type="checkbox"] {
+    opacity: 0;
+    width: 0;
+    margin: 0;
+    margin-left: 25px;
+}
+
+.filter input[type="checkbox"]:checked + label:after {
+    background-image: url('./checkmark.svg');
+    background-size: 16px auto;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-color: #fff;
+}
+
+.filter label:after {
+    content: '';
+    width: 18px;
+    height: 18px;
+    border: 1px solid #ccc;
+    position: absolute;
+    left: 0px;
+    top: 4px;
+    margin: 0;
+}
+
+/* Styling for table */
+.table-container {
+    overflow: auto;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th {
+    background-color: #4F7BB8;
+    color: #fff;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+}
+
+.material-symbols-outlined {
+    color: #000;
+}
+
+/* Styling for add and update form/popup */
+.popup, .chart-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+}
+
+.popup.active, .chart-popup.active {
+    display: block;
+}
+
+.add-form {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 100%;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 35px;
+    border: 1px solid #434343;
+}
+
+.add-form .close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+}
+
+.add-form h2 {
+    text-align: center;
+    margin-top: 0;
+}
+
+.add-form form {
+    display: flex;
+    flex-direction: column;
+    grid-gap: 15px;
+    margin: auto;
+}
+
+.add-form label {
+    flex-basis: 125px;
+    flex-shrink: 0;
+    display: inline-block;
+}
+
+.add-form input, .add-form select {
+    width: 100%;
+    border-radius: 8px;
+    padding: 8px;
+    border: 1px solid gray;
+    flex: auto;
+    background: #fff;
+}
+
+.add-form button.submit {
+    margin: auto;
+}
+
+/* Styling for delete and reset form/popup */
+.delete-form-popup, .reset-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
+}
+
+.delete-form-popup.active, .reset-popup.active {
+    display: block;
+}
+
+.delete-form, .confirm-reset {
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 100%;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 35px;
+    border: 1px solid #434343;
+}
+
+.delete-form .cancel, .confirm-reset .cancel {
+    margin: auto;
+}
+
+.delete-form h2, .confirm-reset h2 {
+    text-align: center;
+    margin-top: 0;
+}
+
+.delete-form form, .confirm-reset #confirmReset {
+    display: flex;
+    flex-direction: row;
+    grid-gap: 15px;
+    margin: auto;
+}
+
+.delete-form label {
+    width: 130px;
+    display: inline-block;
+}
+
+
+.delete-form button.submit, .confirm-reset .submit {
+    margin: auto;
+}
+
+.delete-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+#scheduledTestsHeader {
+    text-align: center;
+}
+
+.deletebutton {
+    cursor: pointer;
+}
+

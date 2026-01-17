@@ -1,0 +1,195 @@
+{% extends "main.j2" %}
+
+{% block page_header %}
+    <div class="flex-center">
+        <h2>Scheduled Tests</h2>
+
+        <div class="add-container {{ "hide" if action == "" }}">
+            <button class="add">Add</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+{# READ table #}
+
+{% if appointmentstests_info and not error %}
+<div class="flex-center filter">
+    <input type="text" id="searchInput" placeholder="Filter results by patient name" autocomplete="off">
+
+    <div class="filters-content-wrap">
+        <div class="filter-button" id="filter-toggle"><span class="material-symbols-outlined" title="filter">filter_list</span> Filter by tests</div>
+
+        <div class="filters-dropdown-content hide">
+            <ul>
+                {% for test in tests %}
+                <li>
+                    <input type="checkbox" checked id="{{ test['name'] }}" name="{{ test['name'] }}">
+                    <label class="label" for="{{ test['name'] }}">{{ test['name'] }}</label>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <button class="button view-chart">View Requested Tests Chart</button>
+</div>
+
+<div class="chart-popup">
+    <div class="add-form">
+        <button class="close"><span class="material-symbols-outlined">close</span></button>
+        <div style="height: 300px; min-width: 450px">
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Store Flask data as a JavaScript variable -->
+<script>
+    const labels = JSON.parse('{{ labels | tojson | safe }}');
+    const chartData = JSON.parse('{{ data | tojson | safe }}');
+
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: 'Tests',
+            backgroundColor: '#4F7BB8',
+            borderColor: '#4F7BB8',
+            data: chartData,
+        }]
+    };
+
+    const config = {
+        type: 'bar',
+        data: data,
+        options: { 
+            maintainAspectRatio: false,
+            animation: false,
+            ticks: {
+                precision: 0
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Number of requested tests by name'
+                }
+            },
+            scales: {
+                y: {
+                    title: {
+                        display: true,
+                        text: '# of requested tests'
+                    }
+                }
+            }
+        }
+    };
+
+    const myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+    );
+</script>
+{% endif %}
+
+{% if appointmentstests_info %}
+<h3 id="scheduledTestsHeader">Scheduled Tests entries may be removed by deleting the asscociated Test </h3>
+<div class="table-container">
+    <table>
+        <thead>
+            {# For the table header row, we print the DB attribute names #}
+            <tr>
+                {% for key in appointmentstests_info[0].keys() %}
+                <th>{{ key }}</th>
+                {% endfor %}
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {# For each row, print the appointmentTestId, patient name, clinic, dateTime, test name, result #}
+            {% for info in appointmentstests_info %}
+            <tr>
+                <td>{{ info['Scheduled Test ID'] or 'N/A' }}</td>
+                <td class="name">{{ info['Patient Name'] or 'N/A' }}</td>
+                <td>{{ info['Clinic'] or 'N/A' }}</td>
+                <td>{{ info['Appointment Date Time'] or 'N/A' }}</td>
+                <td class="test">{{ info['Test Name'] or 'N/A' }}</td>
+                <td>{{ info['Test Result'] or 'N/A' }}</td>
+                <td><a href="{{ url_for('scheduledtests', id=info['Scheduled Test ID']) }}"><span class="material-symbols-outlined" title ="edit">edit</span></td>
+            </tr>
+        
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% if not appointmentstests_info and not error %}
+    <h2 style="text-align:center">No Scheduled Tests to show</h2>
+{% endif %}
+
+{# Form to add and update an appointmenttest #}
+<div class="popup add-form-popup {{"active" if action == "Update"}}">
+    <div class="add-form">
+        <button class="close"><span class="material-symbols-outlined">close</span></button>
+
+        <h2>{{action}} Scheduled Test</h2>
+
+        <form action="/scheduledtests/{{ "create" if action == "Add" else "update" }}" method="POST">
+            {% if action == "Update" %}
+                <input type="hidden" name="appointmentTestId" id="appointmentTestId" value= "{{ appointmenttest['appointmentTestId'] }}">
+            {% endif %}
+            <div class="flex-center">
+                <label for="appointmentId">Appointment: <span class="red">*</span></label>
+                <select name="appointmentId" id="appointmentId" value="{{ appointmenttest['appointmentId'] }}" required>
+                    {% if action == "Add" %}
+                        <option>Select an appointment</option>
+                    {% endif %}
+                    {% if action == "Update" %}
+                        <option>None</option>
+                    {% endif %}
+                    {% for appointment in appointments %}
+                        <option value="{{ appointment['appointmentId'] }}" {% if appointment['appointmentId'] == appointmenttest['appointmentId'] %} selected {% endif %}>{{ appointment['dropDownInfo'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="flex-center">
+                <label for="testId">Test: <span class="red">*</span></label>
+                <select name="testId" id="testId" value="{{ appointmenttest['testId'] }}" required>
+                    {% if action == "Add" %}
+                        <option value="">Select a test</option>
+                    {% endif %}
+                    {% for test in tests %}
+                        <option value="{{ test['testId'] }}" {% if test['testId'] == appointmenttest['testId'] %} selected {% endif %}>{{ test.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="flex-center">
+                <label for="testResultId">Test Result: </label>
+                <select name="testResultId" id="testResultId" value="{{ appointmenttest['testResultId'] }}" >
+                    {% if action == "Add" %}
+                        <option>Select a result</option>
+                    {% endif %}
+                    {% if action == "Update" %}
+                        <option>None</option>
+                    {% endif %}
+                    {% for result in results %}
+                        <option value="{{ result['testResultId'] }}" {% if result['testResultId'] == appointmenttest['testResultId'] %} selected {% endif %}>{{ result.result }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button class="submit">Submit</button>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}

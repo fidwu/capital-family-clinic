@@ -1,0 +1,113 @@
+{% extends "main.j2" %}
+
+{% block page_header %}
+    <div class="flex-center">
+        <h2>Clinics</h2>
+
+        <div class="add-container {{ "hide" if action == "" }}">
+            <button class="add">Add</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+{# READ table #}
+{% if clinics %}
+<div class="table-container">
+    <table>
+        <thead>
+            {# For the table header row, we print the DB attribute names #}
+            <tr>
+                {% for key in clinics[0].keys() %}
+                <th>{{ key }}</th>
+                {% endfor %}
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {# For each row, print the clinicId, address, city, state, postalCode, phoneNumber #}
+            {% for clinic in clinics %}
+            <tr>
+                <td>{{ clinic['Clinic ID'] }}</td>
+                <td>{{ clinic['Address'] }}</td>
+                <td>{{ clinic['City'] }}</td>
+                <td>{{ clinic['State'] }}</td>
+                <td>{{ clinic['Postal Code'] }}</td>
+                <td>{{ clinic['Phone Number'] | default('N/A', true) }}</td>
+                <td><a href="{{ url_for('clinics', id=clinic['Clinic ID']) }}"><span class="material-symbols-outlined" title ="edit">edit</span></a></td>
+                <td>
+                    <form class="delete-trigger" data-id="{{ clinic['Clinic ID'] }}">
+                        <button type="button" class="deletebutton" title="delete">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% if not clinics and not error %}
+    <h2 style="text-align:center">No Clinics to show</h2>
+{% endif %}
+
+{# Form to add and update a clinic #}
+<div class="popup add-form-popup {{"active" if action == "Update"}}">
+    <div class="add-form">
+        <button class="close"><span class="material-symbols-outlined">close</span></button>
+
+        <h2>{{action}} Clinic</h2>
+
+        <form action="/clinics/{{ "create" if action == "Add" else "update" }}" method="POST">
+            {% if action == "Update" %}
+                <input type="hidden" name="clinicId" id="clinicId" value= "{{ clinic['clinicId'] }}">
+            {% endif %}
+            <div class="flex-center">
+                <label for="address">Address: <span class="red">*</span></label>
+                <input type="text" name="address" id="address" value="{{ clinic.address }}" required>
+            </div>
+
+            <div class="flex-center">
+                <label for="city">City: <span class="red">*</span></label>
+                <input type="text" name="city" id="city" value="{{ clinic['city'] }}" required>
+            </div>
+
+            <div class="flex-center">
+                <label for="state">State: <span class="red">*</span></label>
+                <input type="text" pattern="[a-zA-Z]{2}" maxlength="2" name="state" placeholder="State abbreviation" id="state" value="{{ clinic['state'] }}" required>
+            </div>
+
+            <div class="flex-center">
+                <label for="postalCode">Postal Code: <span class="red">*</span></label>
+                <input type="text" pattern="[0-9]{5}" maxlength="5" name="postalCode" id="postalCode" value="{{ clinic['postalCode'] }}" required>
+            </div>
+
+            <div class="flex-center">
+                <label for="phoneNumber">Phone Number:</label>
+                <input type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}|[0-9]{10}" placeholder="123-456-7890 or 1234567890" name="phoneNumber" id="phoneNumber" value="{{ clinic['phoneNumber'] }}" size="23">
+            </div>
+
+            <button class="submit">Submit</button>
+        </form>
+    </div>
+</div>
+
+<div class="delete-form-popup">
+    <div class="delete-form">
+        <h2>Confirm Delete</h2>
+        <p>Are you sure you want to delete this clinic?</p>
+
+        <form id="confirmDeleteForm" method="POST" action="/clinics/delete">
+            <input type="hidden" name="id_to_delete" id="deleteId">  
+            <button class="submit" type="submit">Confirm</button>
+            <button class="cancel" type="button" id="cancel">Cancel</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

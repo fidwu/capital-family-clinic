@@ -1,0 +1,29 @@
+{% extends "main.j2" %}
+
+{% block page_header %}
+    <h2>Home</h2>
+{% endblock %}
+
+{% block content %}
+
+<p>A for-profit medical clinic business in the United States needs a website with a database backend to track its patients, clinic locations, tests, and appointments. The business currently relies on Excel spreadsheets to manage its data, but with anticipated growth, a more efficient system is needed. The business operates 3 locations but has plans to open 7 more clinics by the end of the year. The main clinic sees an average of 30-40 patients each day. The primary purpose of the clinics is to offer basic medical tests, rather than performing advanced surgery or imaging procedures. Each location offers the same easy point-of-care testing procedures to allow patients to choose their preferred clinic. The management team will use this new software system to determine information such as how busy each clinic is and which tests are most requested.</p>
+
+
+<p>This database currently stores the following information:</p>
+<ul>
+    <li><strong>Clinics</strong>: Represents the location of a clinic where appointments take place.</li>
+    <li><strong>Patients</strong>: Represents a patient who may make an appointment at a clinic.</li>
+    <li><strong>Appointments</strong>: Represents an appointment for a patient.</li>
+    <li><strong>Statuses</strong>: Represents the appointment status. Each status (Scheduled, Walk In, No Show, Cancelled, Complete) is represented by a specific statusId.</li>
+    <li><strong>Results</strong>: Represents the results of a test. Each result (positive, negative, or invalid) is represented by a specific testResultId.</li>
+    <li><strong>Tests</strong>: Represents a test that a patient may take at the clinic.</li>
+    <li><strong>Scheduled Tests</strong>: Represents the M:N relationship between appointments and tests. Each scheduled test is also associated with one test result.</li>
+</ul>
+
+<p></p>
+
+<div style="display: flex">
+    <a href="/export" class="button">Export</a>
+</div>
+
+{% endblock %}
