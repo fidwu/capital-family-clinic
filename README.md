@@ -22,7 +22,7 @@ This database currently stores the following information:
 
 <br>
 
-![Schema Diagram](static/schema.jpg)
+![Schema Diagram](static/schema.png)
 
 ## Features
 - Clinics: Add, update, delete
@@ -33,6 +33,7 @@ This database currently stores the following information:
 - Tests: Add, update, delete
 - Scheduled Tests: Add, update, filter by patient name, filter by tests, view chart of requested tests
 - Reset database to default data (`sp_load_clinicdb()`)
+- Export data to excel
 
 ## Technologies
 - Python, Flask
@@ -41,7 +42,7 @@ This database currently stores the following information:
 - Chart.js
 - GitHub Actions (CI/CD) 
 
-## Setup Locally
+## Set Up Locally
 
 ### Environment Variables
 
